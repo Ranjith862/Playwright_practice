@@ -4,6 +4,8 @@ const url: string = "https://artoftesting.com/samplesiteforselenium";
 const w3SchoolsUrl: string = "https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_option_label";
 const demoQAUrl: string = "https://demoqa.com/select-menu";
 const alertUrl: string = "https://the-internet.herokuapp.com/javascript_alerts";
+const iframeUrl1: string = "https://www.w3schools.com/html/tryit.asp?filename=tryhtml5_input_form";
+const iframeUrl2: string = "https://www.w3schools.com/html/html_iframe.asp";
 
 test("Radio Button", async ({ page }) => {
     await page.goto(url);
@@ -144,5 +146,31 @@ test("JavaScript Prompt", async ({ page }) => {
         await dialog.accept(promptInput);
     });
     await alertButton.click();
-    await expect(resultText).toHaveText("You entered: "+ promptInput);
+    await expect(resultText).toHaveText("You entered: " + promptInput);
+});
+
+test("iFrame with name", async ({ page }) => {
+    await page.goto(iframeUrl1);
+    const iframe1 = page.frame("iframeResult");
+
+    await iframe1?.locator("#fname").fill("Test First Name");
+    await iframe1?.locator("#lname").fill("Test Last Name");
+    await iframe1?.locator("input[type='submit']").click();
+
+});
+
+test("iFrame with URL", async ({ page }) => {
+    await page.goto(iframeUrl2);
+    const iframe2 = page.frame({ url: "https://www.w3schools.com/html/default.asp" });
+    await iframe2?.getByRole('button', { name: 'Button to open search field' }).click();
+    await iframe2?.getByPlaceholder("Search...").fill("HTML");
+});
+
+test("iFrame with frameLocator Method", async ({ page }) => {
+    await page.goto(iframeUrl1);
+    const iframe1 = page.frameLocator("#iframeResult");
+    
+    await iframe1.locator("#fname").fill("Test First Name");
+    await iframe1.locator("#lname").fill("Test Last Name");
+    await iframe1.locator("input[type='submit']").click();
 });
