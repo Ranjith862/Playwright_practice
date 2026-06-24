@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 const url: string = "https://artoftesting.com/samplesiteforselenium";
 const w3SchoolsUrl: string = "https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_option_label";
 const demoQAUrl: string = "https://demoqa.com/select-menu";
-const alertUrl: string = "https://demoqa.com/alerts";
+const alertUrl: string = "https://the-internet.herokuapp.com/javascript_alerts";
 
 test("Radio Button", async ({ page }) => {
     await page.goto(url);
@@ -96,6 +96,53 @@ test("Drop Down - select multiple options", async ({ page }) => {
 
 test("JavaScript Alert", async ({ page }) => {
     await page.goto(alertUrl);
+
     const alertButton = page.getByRole('button', { name: 'Click for JS Alert' });
-    
+    const resultText = page.locator("#result");
+
+    page.on("dialog", async dialog => {
+        expect(dialog.type()).toBe("alert");
+        expect(dialog.message()).toBe("I am a JS Alert");
+        console.log(`Dialog message: ${dialog.message()}`);
+        await dialog.accept();
+    });
+    await alertButton.click();
+    await expect(resultText).toHaveText("You successfully clicked an alert");
+
+});
+
+test("JavaScript Confirm", async ({ page }) => {
+    await page.goto(alertUrl);
+
+    const alertButton = page.getByRole('button', { name: 'Click for JS Confirm' });
+    const resultText = page.locator("#result");
+
+    page.on("dialog", async dialog => {
+        expect(dialog.type()).toBe("confirm");
+        expect(dialog.message()).toBe("I am a JS Confirm");
+
+        console.log(`Dialog message: ${dialog.message()}`);
+
+        await dialog.accept();
+    });
+    await alertButton.click();
+    await expect(resultText).toHaveText("You clicked: Ok");
+});
+
+test("JavaScript Prompt", async ({ page }) => {
+    await page.goto(alertUrl);
+
+    const alertButton = page.getByRole('button', { name: 'Click for JS Prompt' });
+    const resultText = page.locator("#result");
+    const promptInput: string = "Test Prompt";
+
+    page.on("dialog", async dialog => {
+        expect(dialog.type()).toBe("prompt");
+        expect(dialog.message()).toBe("I am a JS prompt");
+        console.log(`Dialog message: ${dialog.message()}`);
+
+        await dialog.accept(promptInput);
+    });
+    await alertButton.click();
+    await expect(resultText).toHaveText("You entered: "+ promptInput);
 });
