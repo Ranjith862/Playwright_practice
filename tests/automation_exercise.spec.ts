@@ -3,7 +3,7 @@ import { test, Locator } from "@playwright/test";
 test("Practice of getBy methods", async ({ page }) => {
     //Sign Up
     let url: string = "https://automationexercise.com/login";
-    await page.setViewportSize
+    page.setViewportSize
     await page.goto(url);
     await page.waitForTimeout(5000);
     console.log("User successfully navigated to the login page");
