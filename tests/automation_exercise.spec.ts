@@ -17,7 +17,7 @@ test("Practice of getBy methods", async ({ page }) => {
     console.log("User successfully entered password");
     
     let signUpBtn: Locator = page.getByRole("button", { name: "Signup" });
-    signUpBtn.click(); //Get loctor by role and click the button    
+    await signUpBtn.click(); //Get loctor by role and click the button    
     console.log("Sign Up successfully");
 
     await page.close(); 
