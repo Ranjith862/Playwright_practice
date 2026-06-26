@@ -1,11 +1,57 @@
 import { expect, test } from "@playwright/test";
 
+const googleUrl: string = "https://www.google.com/";
 const url: string = "https://artoftesting.com/samplesiteforselenium";
 const w3SchoolsUrl: string = "https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_option_label";
 const demoQAUrl: string = "https://demoqa.com/select-menu";
 const alertUrl: string = "https://the-internet.herokuapp.com/javascript_alerts";
 const iframeUrl1: string = "https://www.w3schools.com/html/tryit.asp?filename=tryhtml5_input_form";
 const iframeUrl2: string = "https://www.w3schools.com/html/html_iframe.asp";
+const textBoxUrlW3S: string = "https://www.w3schools.com/html/tryit.asp?filename=tryhtml_form_submit";
+const buttonUrl: string = "https://the-internet.herokuapp.com/add_remove_elements/";
+
+test.beforeAll("Browser Close", async ({ page }) => {
+    console.log("Browser Opened");
+})
+
+test.afterAll("Browser Close", async ({ page }) => {
+    await page.close();
+    console.log("Browser Closed");
+})
+
+test("Text Box - locator fill method", async ({ page }) => {
+    await page.goto(textBoxUrlW3S);
+    const iFrame = page.frameLocator("#iframeResult");
+    // await iFrame.locator("#fname").fill("Jack");
+    // await iFrame.locator("#lname").fill("Leon");
+    // await iFrame.locator("input[type=submit]").click();
+    const firstName = iFrame.locator("#fname");
+    const lastName = iFrame.locator("#lname");
+    const submitBtn = iFrame.locator("input[type=submit]");
+
+    await firstName.fill("Jack");
+    await lastName.fill("Leon");
+    await submitBtn.click();
+    const expectedHeading = iFrame.locator("//h1[text()='Submitted Form Data']");
+
+    await expect(expectedHeading).toHaveText("Submitted Form Data");
+});
+
+test("Text Box (Keyboard action) - locator pressSequentially and press method ", async ({ page }) => {
+    await page.goto(googleUrl);
+    const googleTextBox = page.locator("#APjFqb");
+    //await googleTextBox.pressSequentially("Playwright automation");
+    await googleTextBox.pressSequentially("Playwright", { delay: 500 });
+    await googleTextBox.press("ArrowDown+ArrowDown", { delay: 500 });
+    await googleTextBox.press("Enter", { delay: 500 });
+});
+
+test("Buttons - click and double click method", async ({ page }) => {
+    await page.goto(buttonUrl);
+    const addElementBtn = page.getByRole('button', { name: 'Add Element' });
+    await addElementBtn.click(); //Normal Click
+    await addElementBtn.dblclick(); //Double Click
+});
 
 test("Radio Button", async ({ page }) => {
     await page.goto(url);
@@ -169,7 +215,7 @@ test("iFrame with URL", async ({ page }) => {
 test("iFrame with frameLocator Method", async ({ page }) => {
     await page.goto(iframeUrl1);
     const iframe1 = page.frameLocator("#iframeResult");
-    
+
     await iframe1.locator("#fname").fill("Test First Name");
     await iframe1.locator("#lname").fill("Test Last Name");
     await iframe1.locator("input[type='submit']").click();
