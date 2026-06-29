@@ -22,7 +22,7 @@ test.only("Practice of annotations - 4", async ({ page, browserName }) => {
     console.log("End test 4");
 });
 
-test.skip("Practice of annotations - 5", async ({ page,  }) => {
+test.skip("Practice of annotations - 5", async ({ page, }) => {
     console.log("Star test 5");
     console.log("End test 5");
 });
@@ -52,7 +52,7 @@ test("Practice of annotations - 9", async ({ page }) => {
 });
 
 test("Practice of annotations - 10", async ({ page, browserName }) => {
-    test.fail(browserName === "firefox","This test is fail on firefox");
+    test.fail(browserName === "firefox", "This test is fail on firefox");
     console.log("Star test 10");
     console.log("End test 10");
 });

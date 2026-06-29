@@ -9,6 +9,11 @@ const iframeUrl1: string = "https://www.w3schools.com/html/tryit.asp?filename=tr
 const iframeUrl2: string = "https://www.w3schools.com/html/html_iframe.asp";
 const textBoxUrlW3S: string = "https://www.w3schools.com/html/tryit.asp?filename=tryhtml_form_submit";
 const buttonUrl: string = "https://the-internet.herokuapp.com/add_remove_elements/";
+const automationExercise: string = "https://automationexercise.com/";
+const droppable: string = "https://www.globalsqa.com/demo-site/draganddrop/";
+const testPageUrl: string = "https://testpages.eviltester.com/pages/forms/html-form/";
+const davidwashUrl: string = "https://davidwalsh.name/demo/multiple-file-upload.php";
+const herokuAppForFileUpload: string = "https://the-internet.herokuapp.com/upload";
 
 test.beforeAll("Browser Close", async ({ page }) => {
     console.log("Browser Opened");
@@ -220,3 +225,74 @@ test("iFrame with frameLocator Method", async ({ page }) => {
     await iframe1.locator("#lname").fill("Test Last Name");
     await iframe1.locator("input[type='submit']").click();
 });
+
+test("Mouse Hover", async ({ page }) => {
+    await page.goto(automationExercise);
+    const cartLink = page.locator("//a[contains(text(),'Cart')]");
+    await cartLink.hover();
+
+});
+
+test("Drag and Drop", async ({ page }) => {
+    await page.goto(droppable);
+
+    const iframe = page.frameLocator("(//iframe[@class='demo-frame'])[1]");
+
+    const source = iframe.locator("//img[@alt='The peaks of High Tatras']");
+    const target = iframe.locator("//div[@id='trash']");
+
+    await source.dragTo(target);
+
+    await expect(target).toHaveCount(1);
+});
+
+test("Keyboard actions", async ({ page }) => {
+    await page.goto(testPageUrl);
+    const username = page.locator("//input[@name='username']");
+    const password = page.locator("//input[@name='password']");
+    const comments = page.locator("//textarea[@name='comments']");
+
+    await comments.scrollIntoViewIfNeeded();
+
+    await comments.press("Control+A", { delay: 500 });
+    await comments.press("Backspace", { delay: 500 });
+    await comments.fill("Maddy Max");
+    await comments.press("Control+A", { delay: 500 });
+    await comments.press("Control+C", { delay: 500 });
+
+    await username.press("Control+V", { delay: 500 });
+
+    await page.keyboard.press("PageDown");
+    await page.keyboard.press("PageUp");
+});
+
+test("Single File Upload", async ({ page }) => {
+    await page.goto(testPageUrl);
+    const singleFileUpload = page.locator("//input[@name='filename']");
+    await singleFileUpload.setInputFiles("Files/file_one.txt");
+    console.log("Single File Is Uploaded Successfully!")
+});
+
+test("Multiple File Upload", async ({ page }) => {
+    await page.goto(davidwashUrl);
+    const multipleFileUpload = page.locator("//input[@name='filesToUpload']");
+    await multipleFileUpload.setInputFiles(["Files/file_one.txt", "Files/file_two.txt"]);
+    console.log("Multiple Files Are Uploaded Successfully!")
+
+    await multipleFileUpload.setInputFiles([]);
+    console.log("Successfully Removed The Files!");
+});
+
+test("File Upload for div tag", async ({ page }) => {
+    await page.goto(herokuAppForFileUpload);
+    const fileChooserPromise = page.waitForEvent("filechooser");
+    const fileUploader = page.locator("//div[@id='drag-drop-upload']");
+    await fileUploader.click();
+    const fileChooserResolved = await fileChooserPromise;
+    await fileChooserResolved.setFiles([
+        "D:/Wallpaper/R_Shivan.jpg",
+        "D:/Wallpaper/Shivan_Hd_phone_wallpaper.jpg",
+        "D:/Wallpaper/Shivan_Image.jpg"
+    ]);
+    console.log("Files are Uploaded Successfully!");
+})
